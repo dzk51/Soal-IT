@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>It Soal Ujian</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Assessment & Proctoring System</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
+            --border-color: #475569;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .brand span {
+            color: var(--accent-blue);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-primary);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-btn.active {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+
+        .nav-btn:hover:not(.active) {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .view-section.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* --- Student View (Quiz) --- */
+        #student-view {
+            flex-direction: row;
+        }
+
+        .quiz-sidebar {
+            width: 300px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .category-header {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin: 1.5rem 0 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.25rem;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .q-dot {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .q-dot:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .q-dot.active {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .q-dot.answered {
+            background-color: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .q-dot.correct {
+            background-color: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .q-dot.incorrect {
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+        .quiz-main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .question-card {
+            background-color: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .q-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge.beginner { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .badge.intermediate { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+        .badge.advanced { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+        .question-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-btn {
+            background-color: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: left;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent-blue);
+            background-color: var(--bg-tertiary);
+        }
+
+        .option-btn.selected {
+            border-color: var(--accent-blue);
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .option-btn.correct-reveal {
+            border-color: var(--accent-green);
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .option-btn.wrong-reveal {
+            border-color: var(--accent-red);
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            background-color: var(--bg-tertiary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background-color: var(--accent-blue); color: white; }
+        .btn-secondary { background-color: var(--bg-tertiary); color: var(--text-primary); }
+        .btn-success { background-color: var(--accent-green); color: white; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* --- Proctor View --- */
+        #proctor-view {
+            flex-direction: column;
+            padding: 2rem;
+            gap: 1.5rem;
+            overflow-y: auto;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.05) 0%, transparent 20%);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .panel {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0,0,0,0.2);
+        }
+
+        .panel-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        .panel-content {
+            padding: 1rem;
+            flex: 1;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+        }
+
+        /* Warnings Area */
+        .alert-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .system-alert {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--accent-red);
+            padding: 1rem;
+            border-radius: 0.25rem;
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+        }
+
+        .alert-code {
+            color: var(--accent-red);
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .alert-msg {
+            color: var(--text-primary);
+        }
+
+        /* Logs Table */
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .log-table th {
+            text-align: left;
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-secondary);
+        }
+
+        .log-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .log-table tr:hover td {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .log-critical { color: var(--accent-red); }
+        .log-warn { color: var(--accent-orange); }
+        .log-info { color: var(--accent-blue); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.open .modal {
+            transform: translateY(0);
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin: 1rem 0;
+        }
+
+        /* --- SECURITY BLOCK SCREEN --- */
+        #blocked-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #050000;
+            z-index: 99999; /* Above everything */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courier New', Courier, monospace;
+            color: #ff0000;
+            overflow: hidden;
+        }
+
+        #blocked-screen.active {
+            display: flex;
+        }
+
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.2) 50%,
+                rgba(0,0,0,0.2)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100001;
+        }
+
+        .lock-icon {
+            font-size: 8rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            animation: pulse-red 1.5s infinite;
+        }
+
+        .blocked-title {
+            font-size: 3rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 0px #500;
+            animation: glitch 1s linear infinite;
+        }
+
+        .blocked-msg {
+            font-size: 1.2rem;
+            color: #ff9999;
+            margin-bottom: 3rem;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .blocked-code {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 3rem;
+            border: 1px solid #500;
+            padding: 0.5rem 1rem;
+            background: rgba(50, 0, 0, 0.5);
+        }
+
+        .halt-message {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff4444;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 1rem;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { opacity: 0.5; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #student-view { flex-direction: column; }
+            .quiz-sidebar { width: 100%; height: 150px; flex: none; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .blocked-title { font-size: 2rem; letter-spacing: 0.2rem; }
+            .lock-icon { font-size: 5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECURITY BLOCK SCREEN (Hidden by default) -->
+    <div id="blocked-screen">
+        <div class="scanlines"></div>
+        <div class="lock-icon">🔒</div>
+        <div class="blocked-title">ACCESS DENIED</div>
+        <div class="blocked-msg">
+            SECURITY VIOLATION DETECTED.<br>
+            SESSION TERMINATED BY PROCTOR SYSTEM.
+        </div>
+        <div class="blocked-code">ERR_SEC_BLOCK_0x99Z</div>
+        <!-- Restart button removed as requested -->
+        <div class="halt-message">SYSTEM HALTED. CONTACT ADMINISTRATOR.</div>
+    </div>
+
+    <header>
+        <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            Edu<span>Proctor</span>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-btn active" onclick="switchTab('student')">Student Exam</button>
+            <button class="nav-btn" onclick="switchTab('proctor')">Proctor Dashboard</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- STUDENT VIEW -->
+        <section id="student-view" class="view-section active">
+            <div class="quiz-sidebar">
+                <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">Question Map</div>
+                <div id="nav-container">
+                    <!-- Javascript will populate this -->
+                </div>
+                <div style="margin-top: auto; padding-top: 1rem;">
+                    <button class="btn btn-success" style="width: 100%" onclick="submitExam()">Submit Exam</button>
+                </div>
+            </div>
+
+            <div class="quiz-main">
+                <div id="question-container">
+                    <!-- Question renders here -->
+                </div>
+                
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" id="btn-prev" onclick="changeQuestion(-1)">Previous</button>
+                    <span style="color: var(--text-secondary);"><span id="current-q-num">1</span> / 50</span>
+                    <button class="btn btn-primary" id="btn-next" onclick="changeQuestion(1)">Next</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROCTOR VIEW -->
+        <section id="proctor-view" class="view-section">
+            <div class="dashboard-grid">
+                <!-- System Alerts -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <div class="status-dot" style="background-color: var(--accent-red); animation: none;"></div>
+                            Live Threat Monitor
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--accent-red);">LIVE FEED</span>
+                    </div>
+                    <div class="panel-content" id="alert-feed">
+                        <!-- Alerts injected via JS -->
+                    </div>
+                </div>
+
+                <!-- System Logs -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <div class="status-dot"></div>
+                            Audit Log
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-secondary);">SERVER: US-EAST-1</span>
+                    </div>
+                    <div class="panel-content" style="padding: 0;">
+                        <table class="log-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Node</th>
+                                    <th>Event</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-table-body">
+                                <!-- Logs injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for Results -->
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal">
+            <h2>Exam Completed</h2>
+            <div class="score-display" id="final-score">0%</div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Your responses have been recorded and verified.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn btn-secondary" onclick="closeModal()">Review Answers</button>
+                <button class="btn btn-primary" onclick="location.reload()">Restart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- DATA: QUESTIONS --- */
+        const categories = [
+            { id: 'beginner', label: 'Beginner', count: 15 },
+            { id: 'intermediate', label: 'Intermediate', count: 25 },
+            { id: 'advanced', label: 'Advanced', count: 10 }
+        ];
+
+        const questions = [
+            // BEGINNER
+            { id: 1, cat: 0, q: "Pada lingkungan Scratch, koordinat (0,0) menunjukkan posisi apa di dalam panggung (stage)?", options: ["Pojok kiri atas", "Pojok kanan bawah", "Titik tengah (pusat)", "Pojok kiri bawah"], ans: 2 },
+            { id: 2, cat: 0, q: "Jika seorang sprite berada pada koordinat X = 150 dan Y = 0, di posisi manakah sprite tersebut berada?", options: ["Tepat di tengah panggung", "Di tepi kanan panggung", "Di tepi kiri panggung", "Di bagian atas panggung"], ans: 1 },
+            { id: 3, cat: 0, q: "Blok ubah x sebesar 10 akan membuat sprite bergerak ke arah mana?", options: ["Ke atas sebanyak 10 langkah", "Ke kanan sebanyak 10 langkah", "Ke bawah sebanyak 10 langkah", "Ke kiri sebanyak 10 langkah"], ans: 1 },
+            { id: 4, cat: 0, q: "Manakah dari blok berikut yang digunakan untuk menghapus jejak (pen marks) yang ditinggalkan oleh sprite?", options: ["hentikan semua suara", "hapus", "sembunyikan", "bersihkan"], ans: 3 },
+            { id: 5, cat: 0, q: "Blok apa yang digunakan untuk memastikan skrip hanya berjalan ketika pengguna menekan bendera hijau?", options: ["ketika kunci ini ditekan", "ketika saya diklik", "ketika bendera hijau diklik", "ketika latar belakang berpindah"], ans: 2 },
+            { id: 6, cat: 0, q: "Apa fungsi dari blok tunggu 1 detik dalam sebuah algoritma?", options: ["Mengulang perintah selama 1 detik", "Menjeda eksekusi skrip selama 1 detik", "Mengubah kecepatan sprite menjadi 1", "Menghitung mundur waktu selama 1 detik"], ans: 1 },
+            { id: 7, cat: 0, q: "Jika sprite menghadap ke arah kanan (90 derajat) dan Anda menggunakan blok putar -15 derajat, ke arah mana sprite akan menghadap?", options: ["105 derajat", "75 derajat", "45 derajat", "90 derajat"], ans: 1 },
+            { id: 8, cat: 0, q: "Bagaimana cara membuat sprite muncul kembali di panggung setelah disembunyikan?", options: ["tampil", "muncul", "perlihatkan", "aktif"], ans: 2 },
+            { id: 9, cat: 0, q: "Koordinat Y bernilai negatif menunjukkan posisi sprite di bagian mana?", options: ["Atas tengah", "Bawah panggung", "Kiri panggung", "Kanan panggung"], ans: 1 },
+            { id: 10, cat: 0, q: "Apa yang terjadi pada variabel posisi X jika sprite menyentuh tepi kanan panggung dan terus bergerak ke kanan?", options: ["Variabel X akan berhenti di 240", "Sprite akan muncul di sisi kiri (wrap around)", "Sprite akan berbalik arah secara otomatis", "Nilai X akan terus bertambah tanpa batas"], ans: 1 },
+            { id: 11, cat: 0, q: "Manakah blok yang termasuk dalam kategori Events (Peristiwa)?", options: ["bergerak 10 langkah", "ulangi selamanya", "ketika pesan [mari v] diterima", "jika < > maka"], ans: 2 },
+            { id: 12, cat: 0, q: "Untuk mengubah kostum sprite secara berkala agar terlihat bergerak, blok apa yang harus digunakan di dalam loop?", options: ["ubah ukuran sebesar 10", "ganti kostum ke [next costume v]", "ubah efek [pixelate v] sebesar 25", "katakan Halo!"], ans: 1 },
+            { id: 13, cat: 0, q: "Apa hasil dari pilih acak 1 sampai 10?", options: ["Bilangan desimal antara 1 dan 10", "Bilangan bulat antara 1 dan 10 inklusif", "Hanya bilangan ganjil", "Hanya bilangan genap"], ans: 1 },
+            { id: 14, cat: 0, q: "Blok pergi ke x: (0) y: (0) akan memindahkan sprite...", options: ["Secara instan ke posisi tengah tanpa animasi gerak", "Meluncur perlahan ke tengah", "Menambahkan koordinat saat ini dengan 0", "Mengubah arah hadap sprite ke tengah"], ans: 0 },
+            { id: 15, cat: 0, q: "Apa fungsi dari Stage (Panggung) dalam Scratch?", options: ["Tempat menyimpan variabel", "Latar belakang di mana sprite berinteraksi", "Tempat menulis kode pemrograman", "Area untuk mengedit suara"], ans: 1 },
+
+            // INTERMEDIATE
+            { id: 16, cat: 1, q: "Anda memiliki variabel skor bernilai 50. Jika Anda menggunakan blok ubah [skor v] sebesar (10), berapa nilai akhir skor?", options: ["10", "40", "60", "500"], ans: 2 },
+            { id: 17, cat: 1, q: "Bagaimana cara memeriksa apakah sprite menyentuh warna merah?", options: ["Gunakan blok menyentuh [sprite1 v]?", "Gunakan blok menyentuh warna [red v]?", "Gunakan blok jarak ke [sprite1 v]", "Gunakan blok warna [red v] sedang disentuh?"], ans: 1 },
+            { id: 18, cat: 1, q: "Apa output dari operasi logika: <NOT (benar)>?", options: ["Benar", "Salah", "1", "0"], ans: 1 },
+            { id: 19, cat: 1, q: "Sebuah sprite memiliki koordinat X = -100. Setelah mengeksekusi set x ke (x posisi / 2), berapakah nilai X baru?", options: ["-200", "-50", "50", "0"], ans: 1 },
+            { id: 20, cat: 1, q: "Perbedaan utama antara ulangi 10 dan ulangi selamanya adalah...", options: ["ulangi selamanya berjalan lebih cepat", "ulangi 10 membutuhkan variabel, ulangi selamanya tidak", "ulangi 10 akan berhenti setelah 10 iterasi, ulangi selamanya tidak pernah berhenti", "ulangi selamanya hanya bisa digunakan untuk gerakan"], ans: 2 },
+            { id: 21, cat: 1, q: "Anda ingin membuat program berjalan hanya jika variabel nyawa lebih besar dari 0. Manakah blok logika yang tepat?", options: ["jika <(nyawa) = (0)> maka", "jika <(nyawa) > (0)> maka", "sampai <(nyawa) > (0)>", "jika <(nyawa) < (0)> maka"], ans: 1 },
+            { id: 22, cat: 1, q: "Apa fungsi dari blok siarkan [pesan1 v]?", options: ["Mengirim pesan teks ke pengguna", "Memicu semua skrip yang dimulai dengan ketika saya menerima [pesan1 v]", "Mengubah nama sprite menjadi 'pesan1'", "Menghentikan semua skrip lainnya"], ans: 1 },
+            { id: 23, cat: 1, q: "Dalam operator matematika, apa hasil dari (10 mod 3) dalam Scratch?", options: ["3", "1", "3.33", "9"], ans: 1 },
+            { id: 24, cat: 1, q: "Bagaimana cara membuat sprite mengikuti mouse pointer terus-menerus?", options: ["Menggunakan blok ulangi selamanya dan di dalamnya pergi ke [mouse-pointer v]", "Menggunakan blok jika <mouse down?> maka dan glide 1 secs to random position", "Menggunakan blok pada tepi, balik", "Menggunakan blok ulangi selamanya dan putar searah jarum jam 15 derajat"], ans: 0 },
+            { id: 25, cat: 1, q: "Apa yang terjadi jika Anda menempatkan blok hentikan skrip ini di dalam sebuah loop ulangi selamanya?", options: ["Program Scratch akan berhenti total", "Loop akan berhenti dan sprite akan menghilang", "Skrip di dalam loop tersebut akan berhenti berjalan, tetapi skrip lain pada sprite yang sama tetap berjalan", "Loop akan berhenti sebentar lalu lanjut lagi"], ans: 2 },
+            { id: 26, cat: 1, q: "Manakah pernyataan yang BENAR mengenai operator gabungan: <((5) > (3)) DAN <(7) < (9))>?", options: ["Bernilai Salah karena 7 tidak lebih kecil dari 9", "Bernilai Benar karena kedua kondisi terpenuhi", "Bernilai Salah karena 5 tidak sama dengan 3", "Bernilai Benar karena salah satu kondisi terpenuhi"], ans: 1 },
+            { id: 27, cat: 1, q: "Bagaimana cara menyimpan data agar tidak hilang meskipun proyek dihentikan dan dimulai ulang (restart)?", options: ["Menggunakan variabel biasa", "Menggunakan Cloud Data (Jika tersedia) atau fitur penyimpanan eksternal", "Menggunakan daftar (List)", "Tidak mungkin dilakukan di Scratch"], ans: 1 },
+            { id: 28, cat: 1, q: "Blok tanya [Siapa nama kamu?] dan tunggu akan melakukan apa?", options: ["Menampilkan teks di balon percakapan sprite", "Membuat input field untuk pengguna mengetik jawaban dan menyimpannya di variabel jawaban", "Mengubah nama variabel menjadi 'Siapa nama kamu?'", "Menghentikan program sampai mikrofon mendeteksi suara"], ans: 1 },
+            { id: 29, cat: 1, q: "Sebuah timer diatur ke 0. Kemudian ada loop ulangi 10 yang berisi tunggu 1 detik dan ubah [timer v] sebesar (1). Berapa nilai timer setelah loop selesai?", options: ["0", "9", "10", "11"], ans: 2 },
+            { id: 30, cat: 1, q: "Jika Anda ingin mengecek apakah tombol spasi ditekan, blok sensing mana yang digunakan?", options: ["kunci [space v] ditekan?", "mouse down?", "menyentuh [space v]?", "jarak ke [space v]"], ans: 0 },
+            { id: 31, cat: 1, q: "Apa fungsi dari blok buat kloningan dari [myself v]?", options: ["Menduplikasi sprite yang terlihat menjadi objek independen baru", "Menyimpan salinan kostum sprite", "Mengubah ukuran sprite menjadi dua kali lipat", "Membuka editor untuk menggambar ulang sprite"], ans: 0 },
+            { id: 32, cat: 1, q: "Variabel harga bernilai 5000. Variabel diskon bernilai 20 (mewakili 20%). Manakah rumus yang benar untuk menghitung harga akhir?", options: ["(harga) - (diskon)", "(harga) * ((100) - (diskon)) / (100)", "(harga) / (diskon)", "(harga) - ((diskon) * (100))"], ans: 1 },
+            { id: 33, cat: 1, q: "Untuk menggabungkan teks 'Halo' dengan isi variabel nama (misal: 'Budi'), blok apa yang digunakan?", options: ["gabungkan [Halo ] dan [nama]", "Halo + nama", "katakan [Halo ] dan [nama]", "gabungkan huruf [Halo ] dan [nama]"], ans: 0 },
+            { id: 34, cat: 1, q: "Sprite A mengirim pesan 'Mulai'. Sprite B dan Sprite C masing-masing memiliki skrip ketika saya menerima [Mulai v]. Apa yang terjadi?", options: ["Hanya Sprite B yang merespons", "Hanya Sprite C yang merespons", "Sprite B dan C merespons secara bersamaan (paralel)", "Sprite B merespons dulu, baru kemudian Sprite C"], ans: 2 },
+            { id: 35, cat: 1, q: "Apa perbedaan antara hentikan semua dan hentikan skrip ini?", options: ["Tidak ada perbedaan", "hentikan semua menghentikan seluruh proyek, hentikan skrip ini hanya menghentikan satu tumpukan skrip", "hentikan semua hanya menghentikan suara, hentikan skrip ini menghentikan gerakan", "hentikan skrip ini akan mematikan komputer"], ans: 1 },
+            { id: 36, cat: 1, q: "Bagaimana cara membuat sprite bergerak secara acak di seluruh panggung (X antara -200 sampai 200, Y antara -150 sampai 150)?", options: ["pergi ke x: (pilih acak 1 sampai 10) y: (pilih acak 1 sampai 10)", "pergi ke x: (pilih acak -200 sampai 200) y: (pilih acak -150 sampai 150)", "glide 1 secs to random position", "ulangi selamanya putar searah jarum jam (pilih acak 1 sampai 10) derajat"], ans: 1 },
+            { id: 37, cat: 1, q: "Sebuah list (daftar) bernama inventory berisi item: ['Pedang', 'Perisai', 'Ramuan']. Jika Anda menggunakan blok hapus item 1 dari [inventory v], apa isi list sekarang?", options: ["['Pedang', 'Perisai']", "['Perisai', 'Ramuan']", "['Ramuan']", "[]"], ans: 1 },
+            { id: 38, cat: 1, q: "Jika operator matematika pembulatan dari (3.6) digunakan, berapa hasilnya?", options: ["3", "3.5", "4", "3.6"], ans: 2 },
+            { id: 39, cat: 1, q: "Anda ingin sprite bergerak 10 langkah hanya jika sprite tersebut menyentuh warna biru DAN tombol panah atas ditekan. Struktur logika yang tepat adalah...", options: ["jika <menyentuh warna [blue v]?> maka jika <kunci [up arrow v] ditekan?> maka ubah y sebesar 10", "jika <<menyentuh warna [blue v]?> DAN <kunci [up arrow v] ditekan?>> maka ubah y sebesar 10", "jika <menyentuh warna [blue v]?> maka ubah y sebesar 10", "ulangi selamanya ubah y sebesar 10 hentikan jika <menyentuh warna [blue v]?>"], ans: 1 },
+            { id: 40, cat: 1, q: "Apa kegunaan blok set ukuran ke (100) %?", options: ["Mengubah ukuran sprite menjadi 100 pixel", "Mengembalikan ukuran sprite ke ukuran aslinya (default)", "Memperbesar sprite 2 kali lipat", "Memperkecil sprite menjadi setengahnya"], ans: 1 },
+
+            // ADVANCED
+            { id: 41, cat: 2, q: "Perhatikan kode pseudo berikut: Ulangi 3 kali: Ulangi 2 kali: mainkan suara [meow v]. Berapa kali suara 'meow' akan dimainkan total?", options: ["3 kali", "5 kali", "6 kali", "2 kali"], ans: 2 },
+            { id: 42, cat: 2, q: "Sebuah algoritma menggunakan loop sampai <kondisi> untuk mencari nilai tertentu dalam sebuah List. Jika nilai tersebut tidak ada dalam list, apa risiko terbesar?", options: ["Program akan berjalan terlalu cepat", "Program akan mengalami Infinite Loop (loop tak terbatas) jika tidak ada batasan pengaman", "List akan otomatis terhapus", "Variabel akan berubah menjadi negatif"], ans: 1 },
+            { id: 43, cat: 2, q: "Anda memiliki variabel i = 1. Loop: sampai <(i) > (10)>. Isi Loop: ubah [i v] sebesar (1). Berapa banyak kali loop dijalankan?", options: ["9 kali", "10 kali", "11 kali", "1 kali"], ans: 1 },
+            { id: 44, cat: 2, q: "Dalam game bertipe platformer, Anda ingin mendeteksi apakah pemain 'mengenai' musuh dari atas (stomping). Logika yang paling akurat menggunakan y posisi adalah...", options: ["jika <menyentuh [Musuh v]?> maka skor bertambah 1", "jika <<menyentuh [Musuh v]?> DAN <(y posisi) > (y posisi dari [Musuh v])>> maka lompat", "jika <<menyentuh [Musuh v]?> DAN <(y posisi) < (y posisi dari [Musuh v])>> maka hapus kloningan ini", "jika <(y posisi) = (0)> maka game over"], ans: 1 },
+            { id: 45, cat: 2, q: "Manakah urutan blok yang benar untuk membuat cooldown pada serangan sprite (sprite tidak bisa menyerang lagi sampai 1 detik berlalu)?", options: ["ketika kunci [space v] ditekan ubah [cooldown v] sebesar (1) tunggu (1) detik ubah [cooldown v] sebesar (-1)", "ketika kunci [space v] ditekan jika <(cooldown) = (0)> maka ubah [cooldown v] sebesar (1) tunggu (1) detik set [cooldown v] ke (0)", "ulangi selamanya tunggu 1 detik serang", "ketika kunci [space v] ditekan tunggu (cooldown) detik serang"], ans: 1 },
+            { id: 46, cat: 2, q: "Anda ingin membuat efek 'partikel' di mana sprite meledak menjadi 50 kepingan kecil, masing-masing bergerak ke arah acak, dan menghilang setelah 1 detik. Manakah algoritma yang paling efisien?", options: ["Membuat 50 sprite berbeda secara manual dan mengaturnya satu per satu", "Membuat 1 kloningan, lalu menggunakan loop di dalam kloningan untuk menggambar 50 titik menggunakan pena", "Menggunakan loop ulangi 50 buat kloningan dari [myself v] -> Pada kloningan: pergi ke posisi acak tunggu 1 detik hapus kloningan ini", "Mengubah ukuran sprite menjadi 50% selama 1 detik"], ans: 2 },
+            { id: 47, cat: 2, q: "Logika Boolean: <(A) DAN (B)> sama dengan...", options: ["<TIDAK <TIDAK (A) ATAU TIDAK (B)>> (Hukum De Morgan)", "<TIDAK (A) ATAU TIDAK (B)>", "<(A) ATAU (B)>", "<TIDAK (A) DAN TIDAK (B)>"], ans: 0 },
+            { id: 48, cat: 2, q: "Sebuah Sprite bergerak dari (0,0) ke (100,0) dengan blok glide (1) secs to x: (100) y: (0). Jika Anda mengubah pengaturan pen menjadi turunkan pena sebelum blok glide, apa yang akan terbentuk?", options: ["Sebuah garis lurus horizontal", "Sebuah garis putus-putus", "Tidak ada garis, karena glide tidak mendukung pen", "Sebuah titik di (100,0)"], ans: 0 },
+            { id: 49, cat: 2, q: "Anda ingin memprogram menu di mana state (keadaan) permainan berubah dari 'Menu Utama' ke 'Gameplay' tanpa menggunakan latar belakang yang berbeda. Variabel apa yang paling sesuai digunakan?", options: ["Variabel x_pos", "Variabel Boolean GameStatus (0 untuk menu, 1 untuk main)", "Variabel suara", "Variabel skor"], ans: 1 },
+            { id: 50, cat: 2, q: "Perhatikan ekspresi matematika berikut: ((10) + (5)) * ((2) pangkat (3)). Berapa hasilnya?", options: ["60", "120", "80", "1000"], ans: 1 }
+        ];
+
+        /* --- DATA: PROCTORING --- */
+        const systemWarnings = [
+            { code: "SEC_ALERT_0x82F", msg: "Heuristic Detection Triggered. Anomalous cursor trajectory and input velocity mismatch detected. Session locked pending identity verification." },
+            { code: "ERR_VISUAL_0x4A1", msg: "Optical Signature Corrupted. Facial mapping data inconsistent with baseline biometric hash. Please ensure adequate lighting and face the camera." },
+            { code: "NET_FAIL_0x119", msg: "Protocol Violation. Unauthorized external handshake detected via Port 8080. Tunneling attempt blocked. Connection terminated." },
+            { code: "DATA_INTEGRITY_0x003", msg: "Metadata Mismatch. System timestamp drift detected. Local machine time does not sync with server atomic clock. Assessment paused." },
+            { code: "FOCUS_LOSS_0x921", msg: "Focus Integrity Lost. Potential virtual machine or remote desktop software detected. Immediate exit required." }
+        ];
+
+        const proctorLogs = [
+            { time: "10:42:01", node: "Node_Bima", event: "Task Switching Detected (Process: Discord.exe)", type: "warn" },
+            { time: "10:45:15", node: "Node_Siti", event: "Clipboard Access Blocked (Attempted copy)", type: "critical" },
+            { time: "10:48:33", node: "Node_Reza", event: "Webcam Occlusion Warning (Face not visible > 5s)", type: "warn" },
+            { time: "10:52:10", node: "Node_Dina", event: "Multiple Display Output Detected (External Monitor)", type: "critical" },
+            { time: "10:55:00", node: "Node_Admin", event: "System Integrity Check Passed", type: "info" }
+        ];
+
+        /* --- STATE MANAGEMENT --- */
+        let currentIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let isSubmitted = false;
+
+        /* --- INITIALIZATION --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNavigation();
+            renderQuestion();
+            startProctorSimulation();
+            initSecurityBlock(); // Initialize Z-key listener
+        });
+
+        /* --- QUIZ LOGIC --- */
+        function renderNavigation() {
+            const container = document.getElementById('nav-container');
+            container.innerHTML = '';
+            
+            let currentCatIndex = -1;
+
+            questions.forEach((q, index) => {
+                if (q.cat !== currentCatIndex) {
+                    currentCatIndex = q.cat;
+                    const header = document.createElement('div');
+                    header.className = 'category-header';
+                    header.innerText = categories[currentCatIndex].label;
+                    container.appendChild(header);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'question-grid';
+                    grid.id = `grid-${currentCatIndex}`;
+                    container.appendChild(grid);
+                }
+
+                const dot = document.createElement('div');
+                dot.className = `q-dot ${index === 0 ? 'active' : ''}`;
+                dot.innerText = index + 1;
+                dot.onclick = () => goToQuestion(index);
+                dot.id = `nav-dot-${index}`;
+                document.getElementById(`grid-${currentCatIndex}`).appendChild(dot);
+            });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const container = document.getElementById('question-container');
+            const badgeClass = categories[q.cat].id;
+
+            const optionsHtml = q.options.map((opt, i) => {
+                const letter = String.fromCharCode(65 + i);
+                const isSelected = userAnswers[currentIndex] === i;
+                let stateClass = isSelected ? 'selected' : '';
+                
+                if (isSubmitted) {
+                    if (i === q.ans) stateClass = 'correct-reveal';
+                    else if (isSelected && i !== q.ans) stateClass = 'wrong-reveal';
+                }
+
+                return `
+                    <button class="option-btn ${stateClass}" 
+                        onclick="selectAnswer(${i})" 
+                        ${isSubmitted ? 'disabled' : ''}>
+                        <div class="option-letter">${letter}</div>
+                        ${opt}
+                    </button>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="q-meta">
+                        <span>Question ${q.id}</span>
+                        <span class="badge ${badgeClass}">${categories[q.cat].label}</span>
+                    </div>
+                    <div class="question-text">${q.q}</div>
+                    <div class="options-list">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('current-q-num').innerText = currentIndex + 1;
+            
+            document.getElementById('btn-prev').disabled = currentIndex === 0;
+            document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
+
+            document.querySelectorAll('.q-dot').forEach(d => d.classList.remove('active'));
+            document.getElementById(`nav-dot-${currentIndex}`).classList.add('active');
+        }
+
+        function selectAnswer(optionIndex) {
+            if (isSubmitted) return;
+            userAnswers[currentIndex] = optionIndex;
+            renderQuestion();
+        }
+
+        function changeQuestion(delta) {
+            const newIndex = currentIndex + delta;
+            if (newIndex >= 0 && newIndex < questions.length) {
+                currentIndex = newIndex;
+                renderQuestion();
+            }
+        }
+
+        function goToQuestion(index) {
+            currentIndex = index;
+            renderQuestion();
+        }
+
+        function submitExam() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            if (answeredCount < questions.length) {
+                const confirmSubmit = confirm(`Anda baru menjawab ${answeredCount} dari 50 soal. Yakin ingin mengumpulkan?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            calculateAndShowScore();
+            renderQuestion();
+            
+            questions.forEach((q, i) => {
+                const dot = document.getElementById(`nav-dot-${i}`);
+                dot.classList.remove('active');
+                if (userAnswers[i] === q.ans) {
+                    dot.classList.add('correct');
+                } else if (userAnswers[i] !== null) {
+                    dot.classList.add('incorrect');
+                } else {
+                    dot.classList.add('incorrect');
+                }
+            });
+        }
+
+        function calculateAndShowScore() {
+            let correct = 0;
+            questions.forEach((q, i) => {
+                if (userAnswers[i] === q.ans) correct++;
+            });
+            const percentage = Math.round((correct / questions.length) * 100);
+            
+            document.getElementById('final-score').innerText = `${percentage}%`;
+            document.getElementById('result-modal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.remove('open');
+        }
+
+        /* --- PROCTOR LOGIC --- */
+        function startProctorSimulation() {
+            const logTable = document.getElementById('log-table-body');
+            proctorLogs.forEach(log => {
+                const row = document.createElement('tr');
+                let colorClass = '';
+                if(log.type === 'critical') colorClass = 'log-critical';
+                if(log.type === 'warn') colorClass = 'log-warn';
+                if(log.type === 'info') colorClass = 'log-info';
+
+                row.innerHTML = `
+                    <td>${log.time}</td>
+                    <td>${log.node}</td>
+                    <td class="${colorClass}">${log.event}</td>
+                `;
+                logTable.appendChild(row);
+            });
+
+            const alertFeed = document.getElementById('alert-feed');
+            addAlert(alertFeed, systemWarnings[0]);
+
+            setInterval(() => {
+                if(Math.random() > 0.6) {
+                    const randomWarning = systemWarnings[Math.floor(Math.random() * systemWarnings.length)];
+                    addAlert(alertFeed, randomWarning);
+                }
+            }, 4000);
+        }
+
+        function addAlert(container, data) {
+            const alertEl = document.createElement('div');
+            alertEl.className = 'system-alert';
+            alertEl.innerHTML = `
+                <span class="alert-code">[${data.code}]</span>
+                <span class="alert-msg">${data.msg}</span>
+            `;
+            
+            if (container.children.length >= 3) {
+                container.removeChild(container.firstChild);
+            }
+            container.appendChild(alertEl);
+        }
+
+        /* --- SECURITY BLOCK LOGIC (Z-KEY) --- */
+        function initSecurityBlock() {
+            document.addEventListener('keydown', function(event) {
+                // Check if 'z' is pressed (case insensitive)
+                if (event.key.toLowerCase() === 'z') {
+                    triggerBlockScreen();
+                }
+            });
+        }
+
+        function triggerBlockScreen() {
+            const screen = document.getElementById('blocked-screen');
+            if (screen) {
+                screen.classList.add('active');
+            }
+        }
+
+        /* --- TABS --- */
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            
+            if (tabName === 'student') {
+                document.querySelector('.nav-btn:nth-child(1)').classList.add('active');
+                document.getElementById('student-view').classList.add('active');
+            } else {
+                document.querySelector('.nav-btn:nth-child(2)').classList.add('active');
+                document.getElementById('proctor-view').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
